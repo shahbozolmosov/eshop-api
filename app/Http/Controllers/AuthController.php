@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\AuthService;
@@ -62,12 +63,12 @@ class AuthController extends Controller
 
     public function account(): JsonResponse
     {
-
-        return response()->json(auth()->user());
+        return $this->return_success(new UserResource(auth()->user()));
     }
 
     public function logout(Request $request): JsonResponse
     {
+        // Remove user current access token
         $request->user()->currentAccessToken()->delete();
         return $this->return_success('', 'Logout successful!');
     }
