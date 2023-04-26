@@ -11,7 +11,7 @@ class CategoryResource extends JsonResource
     {
         $response = [
             'id' => $this->id,
-            'title' => $this->name,
+            'name' => $this->name,
             'parent_id' => $this->parent_id ?? null,
             'created_at' => $this->created_at->format('d/m/Y'),
         ];

@@ -33,9 +33,15 @@ class CategoryController extends Controller
     }
 
 
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
-        //
+        $category = Category::create([
+            'name' => $request->name,
+            'parent_id' => $request->parent_id??null
+        ]);
+
+        $data = new CategoryResource($category);
+        return $this->return_created_success($data, 'Category');
     }
 
 
