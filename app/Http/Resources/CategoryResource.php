@@ -12,6 +12,7 @@ class CategoryResource extends JsonResource
         $response = [
             'id' => $this->id,
             'name' => $this->name,
+            'image' => $this->images->isNotEmpty() ? asset('/storage/'.$this->images[0]->url):'',
             'parent_id' => $this->parent_id ?? null,
             'created_at' => $this->created_at->format('d/m/Y'),
         ];
