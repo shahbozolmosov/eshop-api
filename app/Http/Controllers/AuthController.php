@@ -28,7 +28,7 @@ class AuthController extends Controller
         return $this->return_success([
             'role' => $role->name,
             'token' => $token,
-        ], 'Register success');
+        ], 'Register successful');
     }
 
     public function login(LoginUserRequest $request, AuthService $authService): JsonResponse
@@ -47,7 +47,7 @@ class AuthController extends Controller
         return $this->return_success([
             'role' => $role,
             'token' => $token,
-        ], 'Login success');
+        ], 'Login successful');
     }
 
     public function updateUser()
@@ -66,9 +66,9 @@ class AuthController extends Controller
         return response()->json(auth()->user());
     }
 
-    public function logout()
+    public function logout(Request $request): JsonResponse
     {
-        auth()->logout();
-        return $this->return_success('', 'Log out success!');
+        $request->user()->currentAccessToken()->delete();
+        return $this->return_success('', 'Logout successful!');
     }
 }
