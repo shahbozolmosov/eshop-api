@@ -51,9 +51,15 @@ class CategoryController extends Controller
     }
 
 
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        //
+        $category->update([
+            'name' => $request->name,
+            'parent_id' => $request->parent_id??$category->parent_id
+        ]);
+
+        $data = new CategoryResource($category);
+        return $this->return_success($data, 'Category update!');
     }
 
 
