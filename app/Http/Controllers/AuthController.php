@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
@@ -51,9 +52,22 @@ class AuthController extends Controller
         ], 'Login successful');
     }
 
-    public function updateUser()
+    public function updateUser(UpdateUserRequest $request, AuthService $authService): JsonResponse
     {
-        //
+        // Check User Credentials
+        $authService->checkPassword(auth()->user()->password, $request->password);
+
+        // Update User data
+        auth()->user()->update([
+            'name' => $request->name,
+            'email'=> $request->email,
+            'updated_at' => now()
+        ]);
+
+        return $this->return_success(
+            new UserResource(auth()->user()),
+            'Profile updated successful'
+        );
     }
 
     public function updatePassword()
