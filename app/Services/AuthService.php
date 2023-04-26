@@ -11,7 +11,7 @@ class AuthService
     {
         $credentials = $request->only(['email', 'password']);
         if(!auth()->attempt($credentials)){
-            abort(422, 'Unauthorized');
+            abort(422, 'The provided credentials are incorrect.');
         }
     }
 }
