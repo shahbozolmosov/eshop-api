@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Role;
@@ -30,7 +31,7 @@ class AuthController extends Controller
         return $this->return_success([
             'role' => $role->name,
             'token' => $token,
-        ], 'Register successful');
+        ], 'Register successfully');
     }
 
     public function login(LoginUserRequest $request, AuthService $authService): JsonResponse
@@ -49,7 +50,7 @@ class AuthController extends Controller
         return $this->return_success([
             'role' => $role,
             'token' => $token,
-        ], 'Login successful');
+        ], 'Login successfully');
     }
 
     public function updateUser(UpdateUserRequest $request, AuthService $authService): JsonResponse
@@ -64,15 +65,28 @@ class AuthController extends Controller
             'updated_at' => now()
         ]);
 
+
         return $this->return_success(
             new UserResource(auth()->user()),
-            'Profile updated successful'
+            'Profile updated successfully'
         );
     }
 
-    public function updatePassword()
+    public function updatePassword(UpdateUserPasswordRequest $request, AuthService $authService): JsonResponse
     {
-        //
+        // Check User Credentials
+        $authService->checkPassword(auth()->user()->password, $request->password);
+
+        // Update User data
+        auth()->user()->update([
+            'password' => Hash::make($request->new_password),
+            'updated_at' => now()
+        ]);
+
+        // Remove all access token
+        auth()->user()->tokens()->delete();
+
+        return $this->return_success('', 'Profile password updated successfully');
     }
 
     public function account(): JsonResponse
@@ -84,6 +98,6 @@ class AuthController extends Controller
     {
         // Remove user current access token
         $request->user()->currentAccessToken()->delete();
-        return $this->return_success('', 'Logout successful!');
+        return $this->return_success('', 'Logout successfully!');
     }
 }
