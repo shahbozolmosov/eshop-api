@@ -6,9 +6,11 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Image;
 use App\Services\QueryPaginationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -35,10 +37,19 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request): JsonResponse
     {
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('category-images');
+        }
+
         $category = Category::create([
             'name' => $request->name,
-            'parent_id' => $request->parent_id??null
+            'parent_id' => $request->parent_id ?? null
         ]);
+
+        if (isset($path)) {
+            $image = new Image(['url' => $path]);
+            $category->images()->save($image);
+        }
 
         $data = new CategoryResource($category);
         return $this->return_created_success($data, 'Category');
@@ -53,10 +64,24 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
+        if($request->hasFile('image')){
+            if(isset($category->images)){
+                Storage::delete($category->images[0]->url);
+            }
+
+            $path = $request->file('image')->store('category-images');
+        }
+
         $category->update([
             'name' => $request->name,
-            'parent_id' => $request->parent_id??$category->parent_id
+            'parent_id' => $request->parent_id ?? $category->parent_id
         ]);
+
+        if(isset($path)){
+            $category->images()->delete();
+            $image = new Image(['url' => $path]);
+            $category->images()->save($image);
+        }
 
         $data = new CategoryResource($category);
         return $this->return_success($data, 'Category update!');
@@ -65,7 +90,11 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): JsonResponse
     {
+        if(isset($category->images)){
+            Storage::delete($category->images[0]->url);
+        }
         $category->delete();
+        $category->images()->delete();
 
         $data = new CategoryResource($category);
         return $this->return_success($data, 'Category removed!');
