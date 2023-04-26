@@ -7,15 +7,11 @@ use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
-    /**
-     * @throws ValidationException
-     */
-    public function checkCredentials($user, $request): void
+    public function checkCredentials($request): void
     {
-        if(!$user || !Hash::check($request->password, $user->password)){
-            throw ValidationException::withMessages([
-                'The provided credentials are incorrect.'
-            ]);
+        $credentials = $request->only(['email', 'password']);
+        if(!auth()->attempt($credentials)){
+            abort(422, 'Unauthorized');
         }
     }
 }
