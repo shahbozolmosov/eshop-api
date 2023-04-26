@@ -39,9 +39,9 @@ class CategoryController extends Controller
     }
 
 
-    public function show(Category $category)
+    public function show(Category $category): JsonResponse
     {
-        //
+        return $this->return_success(new CategoryResource($category));
     }
 
 
