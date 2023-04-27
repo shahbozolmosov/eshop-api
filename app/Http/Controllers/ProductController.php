@@ -124,14 +124,18 @@ class ProductController extends Controller
 
     public function destroy(Product $product): JsonResponse
     {
+        $product->stock()->delete();
         $product->delete();
         if (isset($product->images)) {
             foreach ($product->images as $image) {
                 Storage::delete($image->url);
             }
+            $product->images()->delete();
         }
-
-        $data = new ProductResource($product);
+        $data = [
+            "id" => $product->id,
+            "name" => $product->name
+        ];
         return $this->return_success($data, 'Product removed!');
     }
 }

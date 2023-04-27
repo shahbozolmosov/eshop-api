@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
 class ProductResource extends JsonResource
 {
@@ -21,7 +22,7 @@ class ProductResource extends JsonResource
         ];
     }
 
-    public function getImages($images)
+    public function getImages($images): Collection
     {
         return collect($images)->map(function ($image) {
             if (str_contains($image->url, 'http')) return $image->url;
