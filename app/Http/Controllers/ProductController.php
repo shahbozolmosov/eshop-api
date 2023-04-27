@@ -40,8 +40,6 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $product = new Product();
-
         $resultPath = [];
         //Upload images to store
         if ($request->hasFile('images')) {
