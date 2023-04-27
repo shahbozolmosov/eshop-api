@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+        $this->authorizeResource(Product::class, 'product');
+    }
 
     public function index(Request $request, QueryPaginationService $queryPaginationService): JsonResponse
     {
