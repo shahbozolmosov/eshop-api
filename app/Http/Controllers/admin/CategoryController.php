@@ -65,8 +65,8 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        if($request->hasFile('image')){
-            if(isset($category->images)){
+        if ($request->hasFile('image')) {
+            if (isset($category->images)) {
                 Storage::delete($category->images[0]->url);
             }
 
@@ -78,26 +78,33 @@ class CategoryController extends Controller
             'parent_id' => $request->parent_id ?? $category->parent_id
         ]);
 
-        if(isset($path)){
+        if (isset($path)) {
             $category->images()->delete();
             $image = new Image(['url' => $path]);
             $category->images()->save($image);
         }
 
-        $data = new CategoryResource($category);
-        return $this->return_success($data, 'Category update!');
+        return $this->return_success([
+            'id' => $category->id,
+            'name' => $category->name,
+            'image' => $path??'',
+            'parent_id' => $category->parent_id ?? null,
+            'created_at' => $category->created_at->format('d/m/Y'),
+        ], 'Category update!');
     }
 
 
     public function destroy(Category $category): JsonResponse
     {
-        if(isset($category->images)){
+        if (isset($category->images)) {
             Storage::delete($category->images[0]->url);
         }
         $category->delete();
         $category->images()->delete();
 
-        $data = new CategoryResource($category);
-        return $this->return_success($data, 'Category removed!');
+        return $this->return_success([
+            "id" => $category->id,
+            "name" => $category->name,
+        ], 'Category removed!');
     }
 }
