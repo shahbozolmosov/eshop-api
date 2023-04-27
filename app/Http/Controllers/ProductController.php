@@ -9,7 +9,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Services\QueryPaginationService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+
 
 class ProductController extends Controller
 {
@@ -22,7 +23,7 @@ class ProductController extends Controller
 
         return $this->return_success_pagin(
             $data,
-            $result['toral'],
+            $result['total'],
             $result['page'],
             $result['perPage']
         );
