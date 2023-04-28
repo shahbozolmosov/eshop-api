@@ -4,16 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDistrictRequest;
 use App\Http\Requests\UpdateDistrictRequest;
-use App\Http\Resources\DistrictResoure;
+use App\Http\Resources\DistrictResource;
 use App\Models\District;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DistrictController extends Controller
 {
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return $this->return_success(DistrictResoure::collection(District::all()));
+        if ($regionId = $request->input('regionId')) {
+            $data = DistrictResource::collection(District::where('region_id', $regionId)->get());
+            return $this->return_success([
+                'districts' => $data,
+                'region_id' => $regionId
+            ]);
+        }
+
+        return $this->return_success(DistrictResource::collection(District::all()));
     }
 
 
@@ -30,7 +39,7 @@ class DistrictController extends Controller
 
     public function show(District $district): JsonResponse
     {
-        return $this->return_success(new DistrictResoure($district));
+        return $this->return_success(new DistrictResource($district));
     }
 
 
