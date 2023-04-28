@@ -10,6 +10,11 @@ use Illuminate\Http\JsonResponse;
 
 class RegionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+        $this->authorizeResource(Region::class, 'region');
+    }
 
     public function index(): JsonResponse
     {
