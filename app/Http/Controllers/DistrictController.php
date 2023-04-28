@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 
 class DistrictController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+        $this->authorizeResource(District::class, 'district');
+    }
 
     public function index(Request $request): JsonResponse
     {

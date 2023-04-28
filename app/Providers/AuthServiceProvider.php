@@ -4,9 +4,11 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use App\Models\Category;
+use App\Models\District;
 use App\Models\Product;
 use App\Models\Region;
 use App\Policies\CategoryPolicy;
+use App\Policies\DistrictPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\RegionPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -21,7 +23,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         Category::class => CategoryPolicy::class,
         Product::class => ProductPolicy::class,
-        Region::class => RegionPolicy::class
+        Region::class => RegionPolicy::class,
+        District::class => DistrictPolicy::class,
     ];
 
     /**
