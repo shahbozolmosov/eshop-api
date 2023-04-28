@@ -46,6 +46,6 @@ class RegionController extends Controller
     public function destroy(Region $region): JsonResponse
     {
         $region->delete();
-        return $this->return_success($region, 'Region removed!')
+        return $this->return_success($region, 'Region removed!');
     }
 }
