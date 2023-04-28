@@ -13,7 +13,7 @@ class RegionController extends Controller
 
     public function index(): JsonResponse
     {
-        return $this->return_success(new RegionResource(Region::all()));
+        return $this->return_success(RegionResource::collection(Region::all()));
     }
 
 
