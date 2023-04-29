@@ -40,12 +40,12 @@ class Controller extends BaseController
         ]);
     }
 
-    public function return_error(string $message = '')
+    public function return_error(string $message = ''): JsonResponse
     {
         return response()->json([
             'success' => false,
             'message' => $message
-        ], 400);
+        ], 422);
     }
 
     public function return_not_found(string $message = ''): JsonResponse
