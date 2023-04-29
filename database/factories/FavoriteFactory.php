@@ -11,7 +11,7 @@ class FavoriteFactory extends Factory
     {
         return [
             'user_id' => 2,
-            'product_id' => Product::all()->random()
+            'product_id' => Product::all()->unique()->random()
         ];
     }
 }
