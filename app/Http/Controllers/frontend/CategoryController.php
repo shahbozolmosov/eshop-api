@@ -18,26 +18,25 @@ class CategoryController extends Controller
                 $result = Category::tree();
                 $data = CategoryResource::collection($result);
                 return $this->return_success($data);
-            }else if($cate_sort === 'parent'){
+            } else if ($cate_sort === 'parent') {
                 $result = Category::parentCategories();
                 $data = CategoryResource::collection($result);
                 return $this->return_success($data);
             }
-        } else {
-            /*
-            * Get data pagination with Common queries of database
-            */
-            $result = $queryPaginationService->getData(Category::query(), $request, 'category');
-
-            $data = CategoryResource::collection($result['data']);
-
-            return $this->return_success_pagin(
-                $data,
-                $result['total'],
-                $result['page'],
-                $result['perPage'],
-            );
         }
+        /*
+        * Get data pagination with Common queries of database
+        */
+        $result = $queryPaginationService->getData(Category::query(), $request, 'category');
+
+        $data = CategoryResource::collection($result['data']);
+
+        return $this->return_success_pagin(
+            $data,
+            $result['total'],
+            $result['page'],
+            $result['perPage'],
+        );
 
     }
 
