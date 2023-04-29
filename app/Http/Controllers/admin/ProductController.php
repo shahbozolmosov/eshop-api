@@ -26,7 +26,7 @@ class ProductController extends Controller
 
     public function index(Request $request, QueryPaginationService $queryPaginationService): JsonResponse
     {
-        $result = $queryPaginationService->getData(Product::query(), $request);
+        $result = $queryPaginationService->getData(Product::query(), $request, 'product');
 
         $data = ProductResource::collection($result['data']);
 
