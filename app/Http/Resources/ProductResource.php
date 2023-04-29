@@ -18,7 +18,20 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'qty_left' => $this->stock->qty_left,
             'images' => $this->getImages($this->images),
-            'created_at' => $this->created_at->format('d/m/Y'),
+            'created_at' => $this->when(
+                (isset($request->user()->name)
+                    ? $request->user()->isAdmin()
+                    : false
+                ),
+                $this->created_at->format('d/m/Y')
+            ),
+            'updated_at' => $this->when(
+                (isset($request->user()->name)
+                    ? $request->user()->isAdmin()
+                    : false
+                ),
+                $this->updated_at->format('d/m/Y')
+            ),
         ];
     }
 
