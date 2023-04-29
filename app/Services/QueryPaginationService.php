@@ -4,17 +4,19 @@ namespace App\Services;
 
 class QueryPaginationService
 {
-    public function getData($query, $request): array
+    public function getData($query, $request, $modelType): array
     {
-        if($category_id = $request->input('category_id')) $query->where('category_id', $category_id);
+        if ($modelType != 'category') {
+            if ($category_id = $request->input('category_id')) $query->where('category_id', $category_id);
+        }
 
-        if($s = $request->input('search')) $query->whereRaw("name LIKE '%" . $s . "%'");
+        if ($s = $request->input('search')) $query->whereRaw("name LIKE '%" . $s . "%'");
 
-        if($sort = $request->input('sort')) $query->orderBy('id', $sort);
+        if ($sort = $request->input('sort')) $query->orderBy('id', $sort);
         else $query->latest();
 
         $perPage = 20;
-        if($pageSize = $request->input('page_size')) $perPage = $pageSize;
+        if ($pageSize = $request->input('page_size')) $perPage = $pageSize;
 
         $page = $request->input('page', 1);
         $total = $query->count();

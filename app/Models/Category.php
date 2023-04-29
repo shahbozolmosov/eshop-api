@@ -19,9 +19,10 @@ class Category extends Model
         return $this->morphMany(Image::class, 'imageable');
     }
 
-    public function parentCategory(): BelongsTo
+    public static function parentCategories()
     {
-        return $this->belongsTo(Category::class);
+        $allCategories = Category::get();
+        return $allCategories->whereNull('parent_id');
     }
 
     public function childCategories(): HasMany
@@ -32,5 +33,26 @@ class Category extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public static function tree()
+    {
+        $allCategories = Category::get();
+
+        $rootCategories = $allCategories->whereNull('parent_id');
+        self::formatTree($rootCategories, $allCategories);
+
+        return $rootCategories;
+    }
+
+    private static function formatTree($categories, $allCategories): void
+    {
+        foreach ($categories as $category){
+            $category->children = $allCategories->where('parent_id', $category->id)->values();
+
+            if($category->children->isNotEmpty()){
+                self::formatTree($category->children, $allCategories);
+            }
+        }
     }
 }
