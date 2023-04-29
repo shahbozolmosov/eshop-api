@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\frontend\CategoryController;
+use App\Http\Controllers\frontend\FavoriteController;
 use App\Http\Controllers\frontend\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,4 +13,10 @@ Route::prefix('/categories')->group(function (){
 Route::prefix('/products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/{product}', [ProductController::class, 'show']);
+});
+
+Route::group(['middleware' => 'auth:sanctum'], function (){
+    Route::apiResources([
+        'favorites' => FavoriteController::class
+    ]);
 });
