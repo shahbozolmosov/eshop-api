@@ -14,7 +14,7 @@ class FavoriteController extends Controller
 
     public function index(): JsonResponse
     {
-        $result = auth()->user()->favorites;
+        $result = auth()->user()->favorites->sortDesc();
         $data = FavoriteResource::collection($result);
         return $this->return_success($data);
     }
@@ -37,20 +37,16 @@ class FavoriteController extends Controller
     }
 
 
-    public function show(Favorite $favorite)
+    public function show(Favorite $favorite): JsonResponse
     {
-        //
+        return $this->return_success(new FavoriteResource($favorite));
     }
 
 
-    public function update(UpdateFavoriteRequest $request, Favorite $favorite)
+    public function destroy(Favorite $favorite): JsonResponse
     {
-        //
-    }
+        $favorite->delete();
 
-
-    public function destroy(Favorite $favorite)
-    {
-        //
+        return $this->return_success($favorite, 'Favorite removed!');
     }
 }
