@@ -19,15 +19,15 @@ class Category extends Model
         return $this->morphMany(Image::class, 'imageable');
     }
 
-    public static function parentCategories()
+    public static function parent()
     {
         $allCategories = Category::get();
         return $allCategories->whereNull('parent_id');
     }
 
-    public function childCategories(): HasMany
+    public function children(): HasMany
     {
-        return $this->hasMany(Category::class);
+        return $this->hasMany(Category::class, 'parent_id');
     }
 
     public function products(): HasMany

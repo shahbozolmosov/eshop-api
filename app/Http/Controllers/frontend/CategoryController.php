@@ -19,7 +19,7 @@ class CategoryController extends Controller
                 $data = CategoryResource::collection($result);
                 return $this->return_success($data);
             } else if ($cate_sort === 'parent') {
-                $result = Category::parentCategories();
+                $result = Category::parent();
                 $data = CategoryResource::collection($result);
                 return $this->return_success($data);
             }
