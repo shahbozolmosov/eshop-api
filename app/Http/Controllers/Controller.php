@@ -40,7 +40,7 @@ class Controller extends BaseController
         ]);
     }
 
-    public function return_error(string $message = ''): JsonResponse
+    public function return_error(string | array $message = ''): JsonResponse
     {
         return response()->json([
             'success' => false,

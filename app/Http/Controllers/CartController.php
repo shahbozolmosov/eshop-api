@@ -24,7 +24,7 @@ class CartController extends Controller
         $user = auth()->user();
         $result = $user->carts()->where('product_id', $request->product_id)->first();
 
-        if (empty($result) && $request->qty === 'increment') {
+        if (empty($result) && $request->qty === 'increment') { // New product add to cart
             $result = $user->carts()->create([
                 'product_id' => $request->product_id,
                 'qty' => 1
@@ -32,17 +32,17 @@ class CartController extends Controller
 
             $data = new CartResource($result);
             return $this->return_success($data, 'Product added to cart!');
-        } else {
+        } else if (!empty($result)) { // exist product qty
+            // product's stock quantity_left
+            $qty_left = $result->product->stock->qty_left;
             if ($request->qty === 'increment') { // qty increment
-                // product's stock quantity_left
-                $qty_left = $result->product->stock->qty_left;
-                if ($qty_left > $result->qty_left) {
+                if ($qty_left > $result->qty) {
                     $result->update([
                         'qty' => $result->qty + 1
                     ]);
                 }
             } else if ($request->qty === 'decrement') {// qty decrement
-                if ($result->qty > 1) {
+                if ($result->qty > $qty_left) {
                     $result->update([
                         'qty' => $result->qty - 1
                     ]);
@@ -52,6 +52,10 @@ class CartController extends Controller
             $data = new CartResource($result);
             return $this->return_success($data);
         }
+
+        return $this->return_error([
+            "qty" => "Th qty must be increment"
+        ]);
     }
 
 
