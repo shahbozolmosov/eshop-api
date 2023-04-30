@@ -23,7 +23,7 @@ class RegionController extends Controller
     }
 
 
-    public function store(StoreRegionRequest $request)
+    public function store(StoreRegionRequest $request): JsonResponse
     {
         $region = Region::create([
             'name' => $request->name,
@@ -33,7 +33,7 @@ class RegionController extends Controller
     }
 
 
-    public function show(Region $region)
+    public function show(Region $region): JsonResponse
     {
         return $this->return_success(new RegionResource($region));
     }
