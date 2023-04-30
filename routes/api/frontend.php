@@ -3,6 +3,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\frontend\CategoryController;
 use App\Http\Controllers\frontend\FavoriteController;
+use App\Http\Controllers\frontend\LocationController;
 use App\Http\Controllers\frontend\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,9 @@ Route::prefix('/products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/{product}', [ProductController::class, 'show']);
 });
+
+Route::get('/regions', [LocationController::class, 'regions']);
+Route::get('/districts', [LocationController::class, 'districts']);
 
 Route::group(['middleware' => 'auth:sanctum'], function (){
     Route::prefix('/carts')->group(function (){
