@@ -78,14 +78,19 @@ class AddressController extends Controller
         $address->save();
 
         $data = new AddressResource($address);
-        return $this->return_success($data);
+        return $this->return_success($data, 'Address updated!');
     }
 
 
-    public function destroy(Address $address)
+    public function destroy(Address $address): JsonResponse
     {
+        $address->delete();
+        $address->users()->detach();
 
+        $data = new AddressResource($address);
+        return $this->return_success($data, 'Address removed!');
     }
+
 
     private function checkUserAddress($addressId): JsonResponse|string
     {
