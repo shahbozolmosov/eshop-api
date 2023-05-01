@@ -27,6 +27,10 @@ class DistrictSeeder extends Seeder
                 'region_id' => 9,
                 'name' => "Bulung'ur tumani",
             ],
+            [
+                'region_id' => 12,
+                'name' => "Toshkent tumani",
+            ],
         ];
 
         collect($districts)->map(function ($district){
