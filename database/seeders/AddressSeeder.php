@@ -43,5 +43,16 @@ class AddressSeeder extends Seeder
 
         $address->users()->attach([2]);
 
+        $address = Address::create([
+            'region_id' => 9,
+            'district_id' => 4,
+            'street' => fake()->sentence(),
+            'house' => fake()->sentence(),
+            'apartment' => rand(1, 120),
+            'floor' => rand(1, 12),
+        ]);
+
+        $address->users()->attach([3]);
+
     }
 }
