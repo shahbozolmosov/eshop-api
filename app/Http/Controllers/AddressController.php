@@ -25,13 +25,9 @@ class AddressController extends Controller
 
     public function store(StoreAddressRequest $request): JsonResponse
     {
-        // Validation
+        // Validation request region with exists region
         $district = District::find($request->district_id);
-        if ($district->region_id !== $request->region_id) {
-            throw ValidationException::withMessages([
-                "district_id" => 'The selected district id is invalid.',
-            ]);
-        }
+        $this->checkReigonDistrict($request->region_id, $district->region_id);
 
         //Save data
         $address = Address::create([
@@ -53,9 +49,9 @@ class AddressController extends Controller
 
     public function show(Address $address): JsonResponse
     {
-        // Validation
-        $result = auth()->user()->addresses()->find($address->id);
-        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $address->id);
+        // Validation check user address
+        $result = $this->checkUserAddress($address->id);
+        if($result !== 'ok') return $result;
 
         $data = new AddressResource($result);
         return $this->return_success($data);
@@ -64,16 +60,13 @@ class AddressController extends Controller
 
     public function update(UpdateAddressRequest $request, Address $address): JsonResponse
     {
-        // Validation
-        $result = auth()->user()->addresses()->find($address->id);
-        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $address->id);
+        // Validation check user address
+        $result = $this->checkUserAddress($address->id);
+        if($result !== 'ok') return $result;
 
+        // Validation request region with exists region
         $district = District::find($request->district_id);
-        if ($district->region_id !== $request->region_id) {
-            throw ValidationException::withMessages([
-                "district_id" => 'The selected district id is invalid.',
-            ]);
-        }
+        $this->checkReigonDistrict($request->region_id, $district->region_id);
 
         $address->region_id = $request->region_id;
         $address->district_id = $request->district_id;
@@ -91,6 +84,23 @@ class AddressController extends Controller
 
     public function destroy(Address $address)
     {
-        //
+
+    }
+
+    private function checkUserAddress($addressId): JsonResponse|string
+    {
+        // Validation
+        $result = auth()->user()->addresses()->find($addressId);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $addressId);
+        return 'ok';
+    }
+
+    private function checkReigonDistrict($regionId, $districtId): void
+    {
+        if ($regionId !== $districtId) {
+            throw ValidationException::withMessages([
+                "district_id" => 'The selected district id is invalid.',
+            ]);
+        }
     }
 }
