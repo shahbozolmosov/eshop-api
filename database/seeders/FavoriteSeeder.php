@@ -31,6 +31,10 @@ class FavoriteSeeder extends Seeder
                 'user_id' => 2,
                 'product_id' => 5
             ],
+            [
+                'user_id' => 3,
+                'product_id' => 5
+            ],
         ];
 
         collect($favorites)->map(function ($favorite){
