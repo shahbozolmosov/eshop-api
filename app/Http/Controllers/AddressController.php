@@ -75,27 +75,16 @@ class AddressController extends Controller
             ]);
         }
 
-        // Update data
-        $address->update([
-            'region_id' => $request->region_id,
-            'district_id' => $request->district_id,
-            'street' => $request->street,
-            'house' => $request->house,
-            'apartment' => $request->apartment,
-            'floor' => $request->floor,
-        ]);
+        $address->region_id = $request->region_id;
+        $address->district_id = $request->district_id;
+        $address->street = $request->street;
+        $address->house = $request->house;
+        $address->apartment = $request->apartment;
+        $address->floor = $request->floor;
 
-        $data = [
-            'id' => $address->id,
-            'regions' => new RegionResource($address->region),
-            'district' => new DistrictResource($address->district),
-            'street' => $address->street,
-            'house' => $address->house,
-            'apartment' => $address->apartment,
-            'floor' => $address->floor,
-            'created_at' => $address->created_at->format('d/m/Y'),
-            'updated_at' => $address->updated_at->format('d/m/Y')
-        ];;
+        $address->save();
+
+        $data = new AddressResource($address);
         return $this->return_success($data);
     }
 
