@@ -51,7 +51,6 @@ class Controller extends BaseController
     public function return_not_found(string $message = ''): JsonResponse
     {
         return response()->json([
-            'success' => false,
             "message" => $message,
         ], 404);
     }
