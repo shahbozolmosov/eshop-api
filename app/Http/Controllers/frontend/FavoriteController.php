@@ -25,7 +25,7 @@ class FavoriteController extends Controller
         $user = auth()->user();
 
         $result = $user->favorites()->where('product_id', $request->product_id)->first();
-        if(!empty($result))
+        if (!empty($result))
             return $this->return_error('You have this favorite product');
 
         $favorite = $user->favorites()->create([
@@ -39,9 +39,9 @@ class FavoriteController extends Controller
 
     public function show(Favorite $favorite): JsonResponse
     {
-         // Validation check user address
-        $result = $this->checkUserFavorite($favorite->id);
-        if($result !== 'ok') return $result;
+        // Validation
+        $result = auth()->user()->favorites()->find($favorite->id);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Favorite] ' . $favorite->id);
 
         return $this->return_success(new FavoriteResource($favorite));
     }
@@ -49,20 +49,13 @@ class FavoriteController extends Controller
 
     public function destroy(Favorite $favorite): JsonResponse
     {
-        // Validation check user address
-        $result = $this->checkUserFavorite($favorite->id);
-        if($result !== 'ok') return $result;
+        // Validation
+        $result = auth()->user()->favorites()->find($favorite->id);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Favorite] ' . $favorite->id);
 
         $favorite->delete();
 
         return $this->return_success($favorite, 'Favorite removed!');
     }
 
-    private function checkUserFavorite($favoriteId): JsonResponse|string
-    {
-        // Validation
-        $result = auth()->user()->favorites()->find($favoriteId);
-        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Favorite] ' . $favoriteId);
-        return 'ok';
-    }
 }

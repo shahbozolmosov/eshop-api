@@ -50,8 +50,8 @@ class AddressController extends Controller
     public function show(Address $address): JsonResponse
     {
         // Validation check user address
-        $result = $this->checkUserAddress($address->id);
-        if($result !== 'ok') return $result;
+        $result = auth()->user()->addresses()->find($address->id);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $address->id);
 
         $data = new AddressResource($result);
         return $this->return_success($data);
@@ -61,8 +61,8 @@ class AddressController extends Controller
     public function update(UpdateAddressRequest $request, Address $address): JsonResponse
     {
         // Validation check user address
-        $result = $this->checkUserAddress($address->id);
-        if($result !== 'ok') return $result;
+        $result = auth()->user()->addresses()->find($address->id);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $address->id);
 
         // Validation request region with exists region
         $district = District::find($request->district_id);
@@ -84,20 +84,15 @@ class AddressController extends Controller
 
     public function destroy(Address $address): JsonResponse
     {
+        // Validation check user address
+        $result = auth()->user()->addresses()->find($address->id);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $address->id);
+
         $address->delete();
         $address->users()->detach();
 
         $data = new AddressResource($address);
         return $this->return_success($data, 'Address removed!');
-    }
-
-
-    private function checkUserAddress($addressId): JsonResponse|string
-    {
-        // Validation
-        $result = auth()->user()->addresses()->find($addressId);
-        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $addressId);
-        return 'ok';
     }
 
     private function checkReigonDistrict($regionId, $districtId): void

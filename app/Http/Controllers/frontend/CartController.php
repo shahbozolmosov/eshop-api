@@ -62,6 +62,7 @@ class CartController extends Controller
 
     public function show(Cart $cart): JsonResponse
     {
+        //Validation
         $shopCart = auth()->user()->shoppingCarts()->find($cart->id);
         if (!$shopCart) return $this->return_not_found('No query results for model [App\\Models\\ShoppingCart] ' . $cart->id);
 
@@ -72,6 +73,7 @@ class CartController extends Controller
 
     public function destroy(Cart $cart): JsonResponse
     {
+        //Validation
         $shopCart = auth()->user()->carts()->find($cart->id);
         if (!$shopCart) return $this->return_not_found('No query results for model [App\\Models\\ShoppingCart] ' . $cart->id);
 
