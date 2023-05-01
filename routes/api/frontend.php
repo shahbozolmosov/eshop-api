@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\frontend\CartController;
 use App\Http\Controllers\frontend\CategoryController;
 use App\Http\Controllers\frontend\FavoriteController;
-use App\Http\Controllers\frontend\RegionController;
 use App\Http\Controllers\frontend\ProductController;
+use App\Http\Controllers\frontend\RegionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/categories')->group(function (){
