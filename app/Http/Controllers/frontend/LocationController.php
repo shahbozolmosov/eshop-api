@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class RegionController extends Controller
+class LocationController extends Controller
 {
     public function regions(): JsonResponse
     {
