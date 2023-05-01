@@ -39,14 +39,30 @@ class FavoriteController extends Controller
 
     public function show(Favorite $favorite): JsonResponse
     {
+         // Validation check user address
+        $result = $this->checkUserFavorite($favorite->id);
+        if($result !== 'ok') return $result;
+
         return $this->return_success(new FavoriteResource($favorite));
     }
 
 
     public function destroy(Favorite $favorite): JsonResponse
     {
+        // Validation check user address
+        $result = $this->checkUserFavorite($favorite->id);
+        if($result !== 'ok') return $result;
+
         $favorite->delete();
 
         return $this->return_success($favorite, 'Favorite removed!');
+    }
+
+    private function checkUserFavorite($favoriteId): JsonResponse|string
+    {
+        // Validation
+        $result = auth()->user()->favorites()->find($favoriteId);
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Favorite] ' . $favoriteId);
+        return 'ok';
     }
 }
