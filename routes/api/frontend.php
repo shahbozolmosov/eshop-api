@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\frontend\CartController;
 use App\Http\Controllers\frontend\CategoryController;
 use App\Http\Controllers\frontend\FavoriteController;
@@ -29,6 +30,7 @@ Route::group(['middleware' => 'auth:sanctum'], function (){
     });
 
     Route::apiResources([
-        'favorites' => FavoriteController::class
+        'favorites' => FavoriteController::class,
+        'address' => AddressController::class
     ]);
 });
