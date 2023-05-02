@@ -39,7 +39,7 @@ class AddressController extends Controller
             'floor' => $request->floor,
         ]);
         // Attach to user
-        $userId = auth()->user()->id;
+        $userId = auth()->id();
         $address->users()->attach([$userId]);
 
         $data = new AddressResource($address);
