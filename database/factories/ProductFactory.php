@@ -12,7 +12,7 @@ class ProductFactory extends Factory
         return [
             'category_id' => Category::all()->random(),
             'name' => fake()->sentence(),
-            'price' => fake()->randomFloat(2, 10000, 1000000000),
+            'price' => fake()->randomFloat(2, 100, 1000),
             'description' => fake()->paragraph(15)
         ];
     }
