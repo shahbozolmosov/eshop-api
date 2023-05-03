@@ -28,6 +28,7 @@ class AddressSeeder extends Seeder
             'house' => fake()->sentence(),
             'apartment' => rand(1, 120),
             'floor' => rand(1, 12),
+            'current' => true
         ]);
 
         $address->users()->attach([2]);

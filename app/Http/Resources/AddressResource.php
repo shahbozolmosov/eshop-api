@@ -17,6 +17,7 @@ class AddressResource extends JsonResource
             'house' => $this->house,
             'apartment' => $this->apartment,
             'floor' => $this->floor,
+            'current' => (bool)$this->current
         ];
     }
 }

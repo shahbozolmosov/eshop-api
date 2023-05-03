@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('house');
             $table->string('apartment');
             $table->string('floor');
+            $table->boolean('current')->default(false);
             $table->timestamps();
         });
     }
