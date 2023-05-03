@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Address;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,8 @@ class AddressSeeder extends Seeder
         ]);
 
         $address->users()->attach([2]);
+        $user = User::find(2);
+        $user->update(['default_address' => 2]);
 
         $address = Address::create([
             'region_id' => 9,
