@@ -11,7 +11,7 @@ class Address extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['region_id', 'district_id', 'street', 'house', 'apartment', 'floor', 'current'];
+    protected $fillable = ['region_id', 'district_id', 'street', 'house', 'apartment', 'floor'];
 
     public function users(): BelongsToMany
     {
