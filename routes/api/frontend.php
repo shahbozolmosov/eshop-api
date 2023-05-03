@@ -23,6 +23,7 @@ Route::get('/districts', [LocationController::class, 'districts']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/checkout', [CartController::class, 'checkout']);
+    Route::post('/address/current', [AddressController::class, 'changeCurrentAddress']);
 
     Route::prefix('/carts')->group(function () {
         Route::get('/', [CartController::class, 'index']);

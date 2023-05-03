@@ -11,6 +11,7 @@ use App\Models\Address;
 use App\Models\District;
 use App\Models\Region;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use function Symfony\Component\String\s;
 
@@ -98,6 +99,28 @@ class AddressController extends Controller
 
         $data = new AddressResource($address);
         return $this->return_success($data, 'Address removed!');
+    }
+
+    public function changeCurrentAddress(Request $request): JsonResponse
+    {
+        // Validation check exits address_id
+        $request->validate([
+            'address_id' => 'required'
+        ]);
+
+        // Validation check user address
+        $address = auth()->user()->addresses;
+        $selectedAddress = $address->find($request->address_id);
+        if (!$selectedAddress) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $request->address_id);
+
+        $userAllAddressId = $address->pluck('id');
+        Address::whereIn('id', $userAllAddressId)->update(['current' => false]);
+
+        $selectedAddress->current = true;
+        $selectedAddress->save();
+
+        $data = new AddressResource($selectedAddress);
+        return $this->return_success($data, 'Current address changed!');
     }
 
     private function checkReigonDistrict($regionId, $districtId): void
