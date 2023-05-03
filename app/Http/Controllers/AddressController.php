@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
 use App\Http\Resources\AddressResource;
-use App\Http\Resources\DistrictResource;
-use App\Http\Resources\RegionResource;
 use App\Models\Address;
 use App\Models\District;
-use App\Models\Region;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use function Symfony\Component\String\s;
 
 class AddressController extends Controller
 {
