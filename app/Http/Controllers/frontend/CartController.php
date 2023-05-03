@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Resources\CartResource;
 use App\Models\Cart;
+use App\Models\Order;
+use App\Models\Stock;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-
     public function index(): JsonResponse
     {
         $result = auth()->user()->carts->sortDesc();
@@ -81,5 +84,46 @@ class CartController extends Controller
 
         $data = new CartResource($shopCart);
         return $this->return_success($data, 'Cart removed!');
+    }
+
+
+    public function checkout()
+    {
+        $cart = Cart::where('user_id', auth()->id())->get();
+        $productStock = Stock::select('product_id', 'qty_left')
+            ->whereIn('product_id', $cart->pluck('product_id'))
+            ->pluck('qty_left', 'product_id');
+
+        foreach ($cart as $cartProduct) {
+            if (!isset($productStock[$cartProduct->product_id]) || $productStock[$cartProduct->product_id] < $cartProduct->qty) {
+                return $this->return_not_found('Error: product "' . $cartProduct->product->name . '" not found in stock');
+            }
+        }
+
+        try {
+            Db::transaction(function () use ($cart) {
+                $order = Order::create([
+                    'user_id' => auth()->id(),
+                    'total_price' => 0
+                ]);
+
+                foreach ($cart as $cartProduct) {
+                    $order->products()->attach($cartProduct->product_id, [
+                        'qt' => $cartProduct->qty,
+                        'price' => $cartProduct->product->price
+                    ]);
+
+                    $order->increment('total_price', $cartProduct->qty * $cartProduct->product->price);
+
+                    Stock::where('product_id', $cartProduct->product_id)->decrement('qty_left', $cartProduct->qty);
+                }
+
+                Cart::where('user_id', auth()->id())->delete();
+
+                return $this->return_success('', 'Checkout success!');
+            });
+        } catch (Exception $exception) {
+            return $this->return_error('Error happened. Try agian or contact us');
+        }
     }
 }
