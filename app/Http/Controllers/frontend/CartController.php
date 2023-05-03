@@ -87,7 +87,7 @@ class CartController extends Controller
     }
 
 
-    public function checkout()
+    public function checkout(): JsonResponse
     {
         $cart = Cart::where('user_id', auth()->id())->get();
         $productStock = Stock::select('product_id', 'qty_left')
@@ -122,8 +122,9 @@ class CartController extends Controller
 
                 return $this->return_success('', 'Checkout success!');
             });
-        } catch (Exception $exception) {
+        } catch (Exception) {
             return $this->return_error('Error happened. Try agian or contact us');
         }
+        return $this->return_error('Error happened. Try agian or contact us');
     }
 }
