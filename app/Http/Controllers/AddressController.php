@@ -12,6 +12,7 @@ use App\Models\District;
 use App\Models\Region;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use function Symfony\Component\String\s;
 
 class AddressController extends Controller
 {
@@ -29,6 +30,9 @@ class AddressController extends Controller
         $district = District::find($request->district_id);
         $this->checkReigonDistrict($request->region_id, $district->region_id);
 
+        //Get user all address count
+        $addressCount = auth()->user()->addresses()->count();
+
         //Save data
         $address = Address::create([
             'region_id' => $request->region_id,
@@ -37,6 +41,7 @@ class AddressController extends Controller
             'house' => $request->house,
             'apartment' => $request->apartment,
             'floor' => $request->floor,
+            'current' => $addressCount === 0
         ]);
         // Attach to user
         $userId = auth()->id();
