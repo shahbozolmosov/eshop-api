@@ -17,6 +17,8 @@ use function Symfony\Component\String\s;
 
 class AddressController extends Controller
 {
+    private int $maxUserAddressCount = 100;
+
     public function index(): JsonResponse
     {
         $result = auth()->user()->addresses;
@@ -33,6 +35,12 @@ class AddressController extends Controller
 
         //Get user all address count
         $addressCount = auth()->user()->addresses()->count();
+
+        if ($addressCount >= $this->maxUserAddressCount) {
+            return $this->return_error(
+                'The count of addresses is more than ' . $this->maxUserAddressCount . '. Only ' . $this->maxUserAddressCount . ' addresses are allowed!'
+            );
+        }
 
         //Save data
         $address = Address::create([
