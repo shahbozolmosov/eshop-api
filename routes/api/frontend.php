@@ -6,6 +6,7 @@ use App\Http\Controllers\frontend\CategoryController;
 use App\Http\Controllers\frontend\FavoriteController;
 use App\Http\Controllers\frontend\ProductController;
 use App\Http\Controllers\frontend\LocationController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/categories')->group(function () {
@@ -34,6 +35,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::apiResources([
         'favorites' => FavoriteController::class,
-        'address' => AddressController::class
+        'address' => AddressController::class,
+        'orders' => OrderController::class
     ]);
 });
