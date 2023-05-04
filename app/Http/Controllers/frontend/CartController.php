@@ -5,6 +5,7 @@ namespace App\Http\Controllers\frontend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Resources\CartResource;
+use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Stock;
@@ -89,27 +90,44 @@ class CartController extends Controller
 
     public function checkout(): JsonResponse
     {
-        $cart = Cart::where('user_id', auth()->id())->get();
+        $cart = Cart::with('product')->where('user_id', auth()->id())->get();
+        if ($cart->isEmpty()) {
+            return $this->return_not_found('Error: Your shopping cart is empty');
+        }
+
         $productStock = Stock::select('product_id', 'qty_left')
             ->whereIn('product_id', $cart->pluck('product_id'))
             ->pluck('qty_left', 'product_id');
-
         foreach ($cart as $cartProduct) {
             if (!isset($productStock[$cartProduct->product_id]) || $productStock[$cartProduct->product_id] < $cartProduct->qty) {
                 return $this->return_not_found('Error: product "' . $cartProduct->product->name . '" not found in stock');
             }
         }
 
+        $currentAddress = Address::with('district', 'region')->find(auth()->user()->default_address);
+        $orderAddress = [];
+        if ($currentAddress) {
+            $orderAddress = [
+                'region' => $currentAddress->region->name,
+                'district' => $currentAddress->district->name,
+                'street' => $currentAddress->street,
+                'house' => $currentAddress->house,
+                'apartment' => $currentAddress->apartment,
+                'floor' => $currentAddress->floor,
+            ];
+        }
+
         try {
-            Db::transaction(function () use ($cart) {
+            Db::transaction(function () use ($cart, $orderAddress) {
                 $order = Order::create([
                     'user_id' => auth()->id(),
-                    'total_price' => 0
+                    'total_price' => 0,
+                    'address' => json_encode($orderAddress)
                 ]);
 
                 foreach ($cart as $cartProduct) {
                     $order->products()->attach($cartProduct->product_id, [
-                        'qt' => $cartProduct->qty,
+                        'qty' => $cartProduct->qty,
                         'price' => $cartProduct->product->price
                     ]);
 
@@ -119,12 +137,11 @@ class CartController extends Controller
                 }
 
                 Cart::where('user_id', auth()->id())->delete();
-
-                return $this->return_success('', 'Checkout success!');
             });
+
+            return $this->return_success('', 'Checkout success!');
         } catch (Exception) {
-            return $this->return_error('Error happened. Try agian or contact us');
+            return $this->return_error('Error happened. Try agian or contact us.');
         }
-        return $this->return_error('Error happened. Try agian or contact us');
     }
 }
