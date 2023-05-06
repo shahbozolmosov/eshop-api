@@ -47,7 +47,7 @@ class CartController extends Controller
                     ]);
                 }
             } else if ($request->qty === 'decrement') {// qty decrement
-                if ($result->qty > $qty_left) {
+                if ($result->qty > 1) {
                     $result->update([
                         'qty' => $result->qty - 1
                     ]);

@@ -25,7 +25,7 @@ class OrderController extends Controller
     }
 
 
-    public function store(StoreOrderRequest $request)
+    public function store(StoreOrderRequest $request): JsonResponse
     {
         $product = Product::with('stock')->find($request->product_id);
         if ($product->stock->qty_left < $request->qty) {
