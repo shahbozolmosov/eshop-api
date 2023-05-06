@@ -115,6 +115,8 @@ class CartController extends Controller
                 'apartment' => $currentAddress->apartment,
                 'floor' => $currentAddress->floor,
             ];
+        }else {
+            return $this->return_error('Enter your order address');
         }
 
         try {
