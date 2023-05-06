@@ -105,7 +105,6 @@ class CartController extends Controller
         }
 
         $currentAddress = Address::with('district', 'region')->find(auth()->user()->default_address);
-        $orderAddress = [];
         if ($currentAddress) {
             $orderAddress = [
                 'region' => $currentAddress->region->name,
