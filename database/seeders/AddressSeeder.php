@@ -20,9 +20,9 @@ class AddressSeeder extends Seeder
             'floor' => rand(1, 12),
         ]);
 
-        $address->users()->attach([2]);
-        $user = User::find(2);
-        $user->update(['default_address' => 2]);
+        $address->users()->attach([2], [
+            'is_default' => true
+        ]);
 
         $address = Address::create([
             'region_id' => 9,

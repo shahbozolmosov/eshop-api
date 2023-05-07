@@ -20,7 +20,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'default_address'
     ];
 
 
@@ -56,6 +55,6 @@ class User extends Authenticatable
 
     public function addresses(): BelongsToMany
     {
-        return $this->belongsToMany(Address::class);
+        return $this->belongsToMany(Address::class)->with(['region','district']);
     }
 }
