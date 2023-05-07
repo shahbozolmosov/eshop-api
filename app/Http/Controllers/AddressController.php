@@ -46,11 +46,12 @@ class AddressController extends Controller
             'house' => $request->house,
             'apartment' => $request->apartment,
             'floor' => $request->floor,
-            'current' => $addressCount === 0
         ]);
         // Attach to user
         $userId = auth()->id();
-        $address->users()->attach([$userId]);
+        $address->users()->attach([$userId], [
+            'is_default' => $addressCount === 0
+        ]);
 
         $data = new AddressResource($address);
         return $this->return_created_success($data, 'Address');
@@ -118,9 +119,9 @@ class AddressController extends Controller
         if (!$selectedAddress) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $request->address_id);
 
         $userAllAddressId = $address->pluck('id');
-        Address::whereIn('id', $userAllAddressId)->update(['current' => false]);
+        Address::whereIn('id', $userAllAddressId)->users()->sync(['is_default' => false]);
 
-        $selectedAddress->current = true;
+        $selectedAddress->users()->sync(['is_default' => true]);
         $selectedAddress->save();
 
         $data = new AddressResource($selectedAddress);

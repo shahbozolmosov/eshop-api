@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function addresses(): BelongsToMany
     {
-        return $this->belongsToMany(Address::class)->with(['region','district']);
+        return $this->belongsToMany(Address::class)->with(['region','district'])->withPivot(['is_default']);
     }
 }

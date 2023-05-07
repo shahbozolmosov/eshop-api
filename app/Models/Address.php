@@ -15,7 +15,7 @@ class Address extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot(['is_default']);
     }
 
     public function region(): BelongsTo
