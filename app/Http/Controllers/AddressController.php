@@ -114,18 +114,21 @@ class AddressController extends Controller
         ]);
 
         // Validation check user address
-        $address = auth()->user()->addresses;
-        $selectedAddress = $address->find($request->address_id);
-        if (!$selectedAddress) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $request->address_id);
+        $address = auth()->user()->addresses->find($request->address_id);
+        if (!$address) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $request->address_id);
 
-        $userAllAddressId = $address->pluck('id');
-        Address::whereIn('id', $userAllAddressId)->users()->sync(['is_default' => false]);
+        auth()->user()
+            ->addresses()
+            ->wherePivot('is_default', true)
+            ->update(['is_default' => false]);
 
-        $selectedAddress->users()->sync(['is_default' => true]);
-        $selectedAddress->save();
+        $address->users()->updateExistingPivot(auth()->id(), [
+            'is_default' => true
+        ]);
 
-        $data = new AddressResource($selectedAddress);
-        return $this->return_success($data, 'Current address changed!');
+        return $this->return_success([
+            'default_address_id' => $address->id
+        ], 'Current address changed!');
     }
 
     private function checkReigonDistrict($regionId, $districtId): void

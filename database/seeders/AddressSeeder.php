@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Address;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class AddressSeeder extends Seeder
@@ -55,7 +53,9 @@ class AddressSeeder extends Seeder
             'floor' => rand(1, 12),
         ]);
 
-        $address->users()->attach([3]);
+        $address->users()->attach([3], [
+            'is_default' => true
+        ]);
 
     }
 }
