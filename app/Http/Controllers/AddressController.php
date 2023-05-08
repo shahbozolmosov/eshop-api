@@ -23,7 +23,7 @@ class AddressController extends Controller
     }
 
 
-    public function store(StoreAddressRequest $request): JsonResponse
+    public function store(StoreAddressRequest $request)
     {
         // Validation request region with exists region
         $district = District::find($request->district_id);
@@ -39,17 +39,16 @@ class AddressController extends Controller
         }
 
         //Save data
-        $address = Address::create([
-            'region_id' => $request->region_id,
-            'district_id' => $request->district_id,
-            'street' => $request->street,
-            'house' => $request->house,
-            'apartment' => $request->apartment,
-            'floor' => $request->floor,
-        ]);
-        // Attach to user
-        $userId = auth()->id();
-        $address->users()->attach([$userId], [
+        $address = new Address();
+        $address->region_id = $request->region_id;
+        $address->district_id = $request->district_id;
+        $address->street = $request->street;
+        $address->house = $request->house;
+        $address->apartment = $request->apartment;
+        $address->floor = $request->floor;
+        $address->save();
+
+        $address->users()->syncWithPivotValues([auth()->id()], [
             'is_default' => $addressCount === 0
         ]);
 
@@ -116,6 +115,11 @@ class AddressController extends Controller
         // Validation check user address
         $address = auth()->user()->addresses->find($request->address_id);
         if (!$address) return $this->return_not_found('No query results for model [App\\Models\\Address] ' . $request->address_id);
+        else if ($address->pivot->is_default) {
+            return $this->return_success([
+                'default_address_id' => $address->id
+            ], 'Current address changed!');
+        }
 
         auth()->user()
             ->addresses()

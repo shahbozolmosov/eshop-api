@@ -17,7 +17,11 @@ class AddressResource extends JsonResource
             'house' => $this->house,
             'apartment' => $this->apartment,
             'floor' => $this->floor,
-            'is_default' => (bool)$this->pivot->is_default
+            'is_default' => $this->when(isset($this->pivot),
+                isset($this->pivot)
+                    ? (bool)$this->pivot->is_default
+                    : ''
+            )
         ];
     }
 }
