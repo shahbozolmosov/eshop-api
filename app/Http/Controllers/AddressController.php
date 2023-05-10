@@ -77,7 +77,6 @@ class AddressController extends Controller
         // Validation request region with exists region
         $district = District::find($request->district_id);
         $this->checkReigonDistrict($request->region_id, $district->region_id);
-
         $address->region_id = $request->region_id;
         $address->district_id = $request->district_id;
         $address->street = $request->street;
