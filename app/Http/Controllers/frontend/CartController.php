@@ -104,7 +104,7 @@ class CartController extends Controller
             }
         }
 
-        $currentAddress = Address::with('district', 'region')->find(auth()->user()->default_address);
+        $currentAddress = auth()->user()->addresses()->wherePivot('is_default', true)->first();
         if ($currentAddress) {
             $orderAddress = [
                 'region' => $currentAddress->region->name,
@@ -117,7 +117,7 @@ class CartController extends Controller
         }else {
             return $this->return_error('Enter your order address');
         }
-
+        
         try {
             Db::transaction(function () use ($cart, $orderAddress) {
                 $order = Order::create([
