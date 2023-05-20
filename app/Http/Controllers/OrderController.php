@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderGetAllResource;
 use App\Http\Resources\OrderGetSingleResource;
 use App\Models\Address;
@@ -74,7 +73,7 @@ class OrderController extends Controller
     }
 
 
-    public function show(Order $order)
+    public function show(Order $order): JsonResponse
     {
         // Validation
         $result = Order::with('products')->where('user_id', auth()->id())->where('id', $order->id)->first();
