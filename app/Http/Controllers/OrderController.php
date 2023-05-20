@@ -19,6 +19,7 @@ class OrderController extends Controller
     public function index(): JsonResponse
     {
         $orders = Order::where('user_id', auth()->id())->orderBy('id', 'DESC')->withCount('products')->get();
+//        dd($orders->OrderStatus()->get());
         $data = OrderGetAllResource::collection($orders);
 
         return $this->return_success($data);

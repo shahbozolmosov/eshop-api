@@ -117,13 +117,13 @@ class CartController extends Controller
         }else {
             return $this->return_error('Enter your order address');
         }
-        
         try {
             Db::transaction(function () use ($cart, $orderAddress) {
                 $order = Order::create([
                     'user_id' => auth()->id(),
                     'total_price' => 0,
-                    'address' => json_encode($orderAddress)
+                    'address' => json_encode($orderAddress),
+                    'order_status_id' => 1,
                 ]);
 
                 foreach ($cart as $cartProduct) {

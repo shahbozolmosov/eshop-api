@@ -14,7 +14,7 @@ class OrderGetAllResource extends JsonResource
             'address' => json_decode($this->address),
             'total_price' => $this->total_price,
             'products' => $this->products_count,
-            'order_status' => 'shipping',
+            'order_status' => $this->orderStatus->status,
             'created_at' => $this->created_at->isoFormat('MMM, D YYYY'),
             'updated_at' => $this->updated_at->isoFormat('MMM, D YYYY'),
         ];
