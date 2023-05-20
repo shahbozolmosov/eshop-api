@@ -79,20 +79,14 @@ class OrderController extends Controller
         // Validation
         $result = Order::with('products')->where('user_id', auth()->id())->where('id', $order->id)->first();
         if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Order] ' . $order->id);
-//        dd($result);
         $data = new OrderGetSingleResource($result);
         return $this->return_success($data);
     }
 
 
-    public function update(UpdateOrderRequest $request, Order $order)
-    {
-        //
-    }
-
 
     public function destroy(Order $order)
     {
-        //
+        return $this->return_success($order);
     }
 }

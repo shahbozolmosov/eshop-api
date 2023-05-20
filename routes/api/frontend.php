@@ -33,9 +33,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::delete('/{cart}', [CartController::class, 'destroy']);
     });
 
+    Route::prefix('/orders')->group(function (){
+       Route::get('/', [OrderController::class, 'index']);
+       Route::get('/{order}', [OrderController::class, 'show']);
+       Route::post('/', [OrderController::class, 'store']);
+       Route::delete('/{order}', [OrderController::class, 'destroy']);
+    });
+
     Route::apiResources([
         'favorites' => FavoriteController::class,
         'address' => AddressController::class,
-        'orders' => OrderController::class
     ]);
 });
