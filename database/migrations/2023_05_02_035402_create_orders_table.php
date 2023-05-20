@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,6 +13,10 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            $table->unsignedBigInteger('order_status_id')->nullable();
+            $table->foreign('order_status_id')->references('id')->on('order_statuses')->onDelete('set null');
+
             $table->json('address')->nullable();
             $table->decimal('total_price', 12, 2);
             $table->timestamps();
