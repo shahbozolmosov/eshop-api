@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Http\Resources\OrderGetAllResource;
+use App\Http\Resources\OrderGetSingleResource;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Product;
@@ -75,7 +76,12 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        //
+        // Validation
+        $result = Order::with('products')->where('user_id', auth()->id())->where('id', $order->id)->first();
+        if (!$result) return $this->return_not_found('No query results for model [App\\Models\\Order] ' . $order->id);
+//        dd($result);
+        $data = new OrderGetSingleResource($result);
+        return $this->return_success($data);
     }
 
 
