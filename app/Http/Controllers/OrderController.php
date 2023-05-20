@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
-use App\Http\Resources\OrderResource;
+use App\Http\Resources\OrderGetAllResource;
 use App\Models\Address;
 use App\Models\Order;
 use App\Models\Product;
@@ -18,9 +18,8 @@ class OrderController extends Controller
 
     public function index(): JsonResponse
     {
-        $orders = Order::with('products')->where('user_id', auth()->id())->orderBy('id', 'DESC')->get();
-        dd($orders);
-        $data = OrderResource::collection($orders);
+        $orders = Order::where('user_id', auth()->id())->orderBy('id', 'DESC')->withCount('products')->get();
+        $data = OrderGetAllResource::collection($orders);
 
         return $this->return_success($data);
     }
