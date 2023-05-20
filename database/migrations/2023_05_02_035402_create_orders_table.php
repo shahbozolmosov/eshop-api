@@ -14,9 +14,6 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-            $table->unsignedBigInteger('order_status_id')->nullable();
-            $table->foreign('order_status_id')->references('id')->on('order_statuses')->onDelete('set null');
-
             $table->json('address')->nullable();
             $table->decimal('total_price', 12, 2);
             $table->timestamps();
