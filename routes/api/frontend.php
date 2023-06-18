@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AddressController;
-use App\Http\Controllers\frontend\CartController;
 use App\Http\Controllers\frontend\CategoryController;
 use App\Http\Controllers\frontend\FavoriteController;
 use App\Http\Controllers\frontend\ProductController;
@@ -23,15 +22,7 @@ Route::get('/regions', [LocationController::class, 'regions']);
 Route::get('/districts', [LocationController::class, 'districts']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/checkout', [CartController::class, 'checkout']);
     Route::post('/address/current', [AddressController::class, 'changeCurrentAddress']);
-
-    Route::prefix('/carts')->group(function () {
-        Route::get('/', [CartController::class, 'index']);
-        Route::get('/{cart}', [CartController::class, 'show']);
-        Route::post('/', [CartController::class, 'store']);
-        Route::delete('/{cart}', [CartController::class, 'destroy']);
-    });
 
     Route::prefix('/orders')->group(function (){
        Route::get('/', [OrderController::class, 'index']);
