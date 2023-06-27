@@ -27,7 +27,7 @@ class AddressController extends Controller
     {
         // Validation request region with exists region
         $district = District::find($request->district_id);
-        $this->checkReigonDistrict($request->region_id, $district->region_id);
+        $this->checkRegionDistrict($request->region_id, $district->region_id);
 
         //Get user all address count
         $addressCount = auth()->user()->addresses()->count();
@@ -76,7 +76,7 @@ class AddressController extends Controller
 
         // Validation request region with exists region
         $district = District::find($request->district_id);
-        $this->checkReigonDistrict($request->region_id, $district->region_id);
+        $this->checkRegionDistrict($request->region_id, $district->region_id);
         $address->region_id = $request->region_id;
         $address->district_id = $request->district_id;
         $address->street = $request->street;
@@ -134,7 +134,7 @@ class AddressController extends Controller
         ], 'Current address changed!');
     }
 
-    private function checkReigonDistrict($regionId, $districtId): void
+    private function checkRegionDistrict($regionId, $districtId): void
     {
         if ($regionId !== $districtId) {
             throw ValidationException::withMessages([
