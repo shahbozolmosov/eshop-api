@@ -23,7 +23,10 @@ class AddressController extends Controller
     }
 
 
-    public function store(StoreAddressRequest $request)
+    /**
+     * @throws ValidationException
+     */
+    public function store(StoreAddressRequest $request): JsonResponse
     {
         // Validation request region with exists region
         $district = District::find($request->district_id);
@@ -40,13 +43,7 @@ class AddressController extends Controller
 
         //Save data
         $address = new Address();
-        $address->region_id = $request->region_id;
-        $address->district_id = $request->district_id;
-        $address->street = $request->street;
-        $address->house = $request->house;
-        $address->apartment = $request->apartment;
-        $address->floor = $request->floor;
-        $address->save();
+        $this->extracted($request, $address);
 
         $address->users()->syncWithPivotValues([auth()->id()], [
             'is_default' => $addressCount === 0
@@ -68,6 +65,9 @@ class AddressController extends Controller
     }
 
 
+    /**
+     * @throws ValidationException
+     */
     public function update(UpdateAddressRequest $request, Address $address): JsonResponse
     {
         // Validation check user address
@@ -77,14 +77,8 @@ class AddressController extends Controller
         // Validation request region with exists region
         $district = District::find($request->district_id);
         $this->checkRegionDistrict($request->region_id, $district->region_id);
-        $address->region_id = $request->region_id;
-        $address->district_id = $request->district_id;
-        $address->street = $request->street;
-        $address->house = $request->house;
-        $address->apartment = $request->apartment;
-        $address->floor = $request->floor;
 
-        $address->save();
+        $this->extracted($request, $address);
 
         $data = new AddressResource($address);
         return $this->return_success($data, 'Address updated!');
@@ -141,5 +135,21 @@ class AddressController extends Controller
                 "district_id" => 'The selected district id is invalid.',
             ]);
         }
+    }
+
+    /**
+     * @param StoreAddressRequest $request
+     * @param Address $address
+     * @return void
+     */
+    public function extracted(StoreAddressRequest $request, Address $address): void
+    {
+        $address->region_id = $request->region_id;
+        $address->district_id = $request->district_id;
+        $address->street = $request->street;
+        $address->house = $request->house;
+        $address->apartment = $request->apartment;
+        $address->floor = $request->floor;
+        $address->save();
     }
 }
