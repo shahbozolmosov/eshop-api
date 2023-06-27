@@ -138,11 +138,11 @@ class AddressController extends Controller
     }
 
     /**
-     * @param StoreAddressRequest $request
+     * @param StoreAddressRequest|UpdateAddressRequest $request
      * @param Address $address
      * @return void
      */
-    public function extracted(StoreAddressRequest $request, Address $address): void
+    public function extracted(StoreAddressRequest | UpdateAddressRequest $request, Address $address): void
     {
         $address->region_id = $request->region_id;
         $address->district_id = $request->district_id;
