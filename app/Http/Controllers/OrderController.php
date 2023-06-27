@@ -7,8 +7,10 @@ use App\Http\Resources\OrderGetAllResource;
 use App\Http\Resources\OrderGetSingleResource;
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\OrderStatus;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +21,6 @@ class OrderController extends Controller
     public function index(): JsonResponse
     {
         $orders = Order::where('user_id', auth()->id())->orderBy('id', 'DESC')->withCount('products')->get();
-//        dd($orders->OrderStatus()->get());
         $data = OrderGetAllResource::collection($orders);
 
         return $this->return_success($data);
@@ -32,8 +33,10 @@ class OrderController extends Controller
         if ($product->stock->qty_left < $request->qty) {
             return $this->return_not_found('Error: product "' . $product->name . '" not found in stock');
         }
+        //Get Current Address
+        $user = User::find(auth()->id());
+        $currentAddress = $user->addresses()->wherePivot('is_default', true)->first();
 
-        $currentAddress = Address::with('district', 'region')->find(auth()->user()->default_address);
         if ($currentAddress) {
             $orderAddress = [
                 'region' => $currentAddress->region->name,
@@ -47,11 +50,15 @@ class OrderController extends Controller
             return $this->return_error('Enter your order address');
         }
 
+        //Get Order Packing Status
+        $orderStatus = OrderStatus::where('status', 'packing')->first();
+
         try {
-            DB::transaction(function () use ($request, $product, $orderAddress) {
+            DB::transaction(function () use ($request, $product, $orderAddress, $orderStatus) {
                 $order = Order::create([
                     'user_id' => auth()->id(),
                     'total_price' => 0,
+                    'order_status_id' => $orderStatus->id,
                     'address' => json_encode($orderAddress)
                 ]);
 
@@ -68,7 +75,7 @@ class OrderController extends Controller
 
             return $this->return_success('', 'Your order has been accepted success!');
         } catch (Exception) {
-            return $this->return_error('Error happened. Try agian or contact us.');
+            return $this->return_error('Error happened. Try again or contact us.');
         }
 
     }
