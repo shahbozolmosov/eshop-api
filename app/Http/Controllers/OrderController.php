@@ -29,6 +29,7 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request): JsonResponse
     {
+        // dd(now()->addDays(2));
         $product = Product::with('stock')->find($request->product_id);
         if ($product->stock->qty_left < $request->qty) {
             return $this->return_not_found('Error: product "' . $product->name . '" not found in stock');
@@ -59,7 +60,8 @@ class OrderController extends Controller
                     'user_id' => auth()->id(),
                     'total_price' => 0,
                     'order_status_id' => $orderStatus->id,
-                    'address' => json_encode($orderAddress)
+                    'address' => json_encode($orderAddress),
+                    'shipping_date' => now()->addDays(2)->endOfDay(),
                 ]);
 
                 $order->products()->attach($product->id, [

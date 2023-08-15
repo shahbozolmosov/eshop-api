@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('order_status_id')->constrained();
-
+            $table->dateTime('shipping_date')->nullable();
             $table->json('address')->nullable();
             $table->decimal('total_price', 12, 2);
             $table->timestamps();
